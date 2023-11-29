@@ -7,7 +7,7 @@ PICPURIFY_MODERATION_CLASSES = ['porn_moderation', 'suggestive_nudity_moderation
 
 # Initialize PicPurifyImage client
 image_client = PicPurifyImage(PICPURIFY_API_KEY, PICPURIFY_MODERATION_CLASSES)
-
+app = Flask(__name__)
 @app.route('/check_moderation', methods=['POST'])
 def check_moderation():
     try:
