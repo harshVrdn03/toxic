@@ -3,7 +3,7 @@ from picpurify.api import PicPurifyImage, PicPurifyException
 import os
 
 PICPURIFY_API_KEY = os.environ.get('PICPURIFY_API_KEY')
-PICPURIFY_MODERATION_CLASSES = ['porn_moderation', 'suggestive_nudity_moderation', 'weapon_moderation']
+PICPURIFY_MODERATION_CLASSES = ['porn_moderation', 'weapon_moderation']
 
 # Initialize PicPurifyImage client
 image_client = PicPurifyImage(PICPURIFY_API_KEY, PICPURIFY_MODERATION_CLASSES)
