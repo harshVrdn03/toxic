@@ -1,25 +1,32 @@
 from flask import Flask, request, jsonify
-from detoxify import Detoxify
-app = Flask(__name__)
-model = Detoxify('original')
-@app.route('/')
-def hello_world():
-    return 'Hello, World! from Harsh Vardhan'
-@app.route('/analyze', methods=['POST'])
-def analyze_toxicity():
-    data = request.get_json()  # Get the JSON data from the request body
-    text = data.get('text')    # Get the 'text' field from the JSON data
-    results = model.predict(text)
+from picpurify.api import PicPurifyImage, PicPurifyException
+import os
 
-    # Extract the specific toxicity scores you want to return
-    toxicity_score = results.get('toxicity')
-    severe_toxicity_score = results.get('severe_toxicity')
-    toxicity = results['toxicity']
-    severe_toxicity = results['severe_toxicity']
-    obscene = results['obscene']
-    threat = results['threat']
-    insult = results['insult']
-    identity_attack = results['identity_attack']
-    print(results)
-    results = {key: float(value) for key, value in results.items()}
-    return results 
+PICPURIFY_API_KEY = os.environ.get('PICPURIFY_API_KEY')
+PICPURIFY_MODERATION_CLASSES = ['porn_moderation', 'suggestive_nudity_moderation', 'weapon_moderation']
+
+# Initialize PicPurifyImage client
+image_client = PicPurifyImage(PICPURIFY_API_KEY, PICPURIFY_MODERATION_CLASSES)
+
+@app.route('/check_moderation', methods=['POST'])
+def check_moderation():
+    try:
+        # Get the image URL from the request
+        image_url = request.json.get('image_url')
+
+        # Check if the 'image_url' parameter is present in the request
+        if not image_url:
+            return jsonify({'error': 'Image URL is required'}), 400
+
+        # Analyze the image using PicPurify API
+        response = image_client.analyse(image_url)
+
+        # Check the moderation decision
+        if response['final_decision'] == 'OK':
+            return jsonify({'status': 'Image Accepted', 'details': response}), 200
+        else:
+            return jsonify({'status': 'Image Rejected', 'reject_criteria': response['reject_criteria']}), 403
+
+    except PicPurifyException as e:
+        return jsonify({'error': str(e)}), 500
+        
