@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
 from picpurify.api import PicPurifyImage, PicPurifyException
+from flask_cors import CORS
 import os
 import requests
 import json
-
+CORS(app)
 app = Flask(__name__)
 
 # Replace these placeholder values with your actual API keys and workflow
