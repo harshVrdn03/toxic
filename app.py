@@ -4,9 +4,9 @@ from flask_cors import CORS
 import os
 import requests
 import json
-CORS(app)
-app = Flask(__name__)
 
+app = Flask(__name__)
+CORS(app)
 # Replace these placeholder values with your actual API keys and workflow
 PICPURIFY_API_KEY = os.environ.get('PICPURIFY_API_KEY')
 PICPURIFY_MODERATION_CLASSES = ['porn_moderation', 'weapon_moderation']
